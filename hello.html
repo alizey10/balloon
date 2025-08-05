@@ -1,0 +1,97 @@
+<style>
+  #container {
+    width: 500px;
+    height: 500px;
+    border: 1px solid red;
+    margin: auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .balloon {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 100px;
+  }
+</style>
+
+<input type="range" value="1" min="1" max="10" oninput="changeSpeed(this)">
+<button onclick="addBalloon()">Add Balloon</button>
+
+<div id="container"></div>
+
+<script>
+  let speed = 1;
+
+  function changeSpeed(input) {
+    speed = +input.value;
+  }
+
+  let balloonCount = 0;
+  let balloons = [];
+
+  function addBalloon() {
+    const container = document.getElementById("container");
+    const balloon = document.createElement("img");
+    balloon.src = "red-removebg-preview.png";
+    balloon.className = "balloon";
+    balloon.style.left = Math.random() * (container.offsetWidth - 50) + "px";
+    balloon.style.top = Math.random() * (container.offsetHeight - 50) + "px";
+    balloon.id = "balloon-" + balloonCount++;
+
+    container.appendChild(balloon);
+
+    const state = {
+      el: balloon,
+      directionX: 1,
+      directionY: 1
+    };
+
+    balloons.push(state);
+  }
+
+  // Start animation loop
+  setInterval(() => {
+    const container = document.getElementById("container");
+
+    balloons.forEach((balloon) => {
+      const el = balloon.el;
+
+      let left = el.offsetLeft;
+      let top = el.offsetTop;
+
+      if (balloon.directionX === 1) {
+        left += speed;
+      } else {
+        left -= speed;
+      }
+
+      if (balloon.directionY === 1) {
+        top += speed;
+      } else {
+        top -= speed;
+      }
+
+      // Collision detection with container
+      if (left + el.offsetWidth >= container.offsetWidth) {
+        balloon.directionX = 0;
+        // el.style.backgroundColor = "red";
+      } else if (left <= 0) {
+        balloon.directionX = 1;
+        // el.style.backgroundColor = "green";
+      }
+
+      if (top + el.offsetHeight >= container.offsetHeight) {
+        balloon.directionY = 0;
+        // el.style.backgroundColor = "yellow";
+      } else if (top <= 0) {
+        balloon.directionY = 1;
+        // el.style.backgroundColor = "blue";
+      }
+
+      el.style.left = left + "px";
+      el.style.top = top + "px";
+    });
+  }, 2);
+</script>
